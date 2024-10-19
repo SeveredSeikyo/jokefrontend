@@ -16,7 +16,7 @@ class JokeApp extends Component{
     }
 
     getJokes=async()=>{
-        const response=await Axios.get("http://localhost:5000/getjokes");
+        const response=await Axios.get("http://jokes-backend-api.netlify.app/getjokes");
         console.log(response);
         const {data} = response;
         console.log(data);
