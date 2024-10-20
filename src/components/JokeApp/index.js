@@ -96,7 +96,7 @@ class JokeApp extends Component{
     
         this.setState({
             filteredJokes: randomJokes,
-            jokeToRender: this.getRandomJoke(randomJokes), // Optional: Get a random joke from the selected random jokes
+            jokeToRender: this.getRandomJoke(jokes), // Optional: Get a random joke from the selected random jokes
         });
     }
 
@@ -157,8 +157,9 @@ class JokeApp extends Component{
                 ): <JokeItem joke={joke}/>}
                 <button type="submit" className="submit-button">Get Joke</button>
 
-                <p>*please select only upto 5 Jokes at a time. If above 5 are selected, system will return only 5*</p>
-                <p>*default category is set to dadjoke. change it if needed*</p>
+                <p>*please select only upto 5 Jokes at a time. If above 5 are selected, system will return only 5*<br/>
+                *default category is set to dadjoke. change it if needed*<br/>
+                *if No Matched Jokes found then it returns random Joke*</p>
             </form>
         )
     }
