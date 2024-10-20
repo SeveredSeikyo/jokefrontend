@@ -88,6 +88,8 @@ class JokeApp extends Component{
     
             return categoryMatch && jokeTypeMatch;
         });
+
+        console.log(categorisedJokes);
     
         // Shuffle and select random jokes
         const randomJokes = this.getRandomJokes(categorisedJokes, count);
