@@ -51,9 +51,9 @@ class JokeApp extends Component{
         }));
     }
 
-    handleFormSubmit=async(event)=>{
+    /*handleFormSubmit=async(event)=>{
         event.preventDefault();
-        const {filters}=this.state;
+        const {jokes,filters}=this.state;
         let {category, jokeType, count}=filters;
         if(count>5){
             count=5;
@@ -67,7 +67,51 @@ class JokeApp extends Component{
             filteredJokes: data,
             jokeToRender:this.getRandomJoke(data),
         });
+    }*/
+
+    handleFormSubmit = async (event) => {
+        event.preventDefault();
+        const { jokes, filters } = this.state;
+        let { category, jokeType, count } = filters;
+    
+        if (count > 5) {
+            count = 5; // Limiting the maximum count to 5
+        }
+    
+        // Filter jokes based on category and joke type
+        const categorisedJokes = jokes.filter(joke => {
+            // Check if category matches or if category is not provided
+            const categoryMatch = category === "" || joke.category === category;
+    
+            // Check if jokeType matches (e.g., nsfw, sexist, safe, etc.)
+            const jokeTypeMatch = jokeType === "" || joke[jokeType] === 1;
+    
+            return categoryMatch && jokeTypeMatch;
+        });
+    
+        // Shuffle and select random jokes
+        const randomJokes = this.getRandomJokes(categorisedJokes, count);
+    
+        this.setState({
+            filteredJokes: randomJokes,
+            jokeToRender: this.getRandomJoke(randomJokes), // Optional: Get a random joke from the selected random jokes
+        });
     }
+
+    // Function to shuffle array and select random items
+    getRandomJokes = (jokes, count) => {
+        const shuffled = jokes.slice(); // Make a copy of the array
+    
+        // Fisher-Yates shuffle algorithm
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap
+        }
+    
+        // Return the first `count` items from the shuffled array
+        return shuffled.slice(0, count);
+    }
+
 
     componentDidMount(){
         this.getJokes();
