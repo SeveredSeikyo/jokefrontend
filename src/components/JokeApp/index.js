@@ -1,52 +1,129 @@
 import {Component} from 'react';
 import Axios from 'axios'
+import "./index.css"
+
+const JokeItem=({joke})=>{
+    return(
+        <>
+            <h3>{joke.setup}</h3>
+            {joke.delivery!==""?<p>{joke.delivery}</p>:null}
+        </>
+    )
+}
+
 class JokeApp extends Component{
-    state={
-        filters:{
-            category:"",
-            nsfw: false,
-            sexist: false,
-            political:false,
-            racist:false,
-            explicit:false,
-            religious:false,
-            safe:false
+    state = {
+        filters: {
+            category: "dadjoke",
+            jokeType: "safe",
+            count: 1,
         },
-        jokes:[],
+        jokes: [],
+        filteredJokes:[],
+        jokeToRender:null,
+    };
+
+    
+    getJokes = async () => {
+        const response = await Axios.get("https://jokes-api-1qwo.onrender.com/getjokes");
+        const { data } = response;
+
+        this.setState({
+            jokes: data,
+            filteredJokes: [],
+            jokeToRender: this.getRandomJoke(data), // Select a random joke after fetching all jokes
+        });
+    };
+
+    getRandomJoke = (jokes) => {
+        if (jokes.length === 0) return null; // Return null if no jokes are available
+        const randomIndex = Math.floor(Math.random() * jokes.length);
+        return jokes[randomIndex]; // Return a random joke from the jokes array
+    };
+
+    handleInputChange = (event) => {
+        const { name, value } = event.target;
+        this.setState((prevState) => ({
+            filters: {
+                ...prevState.filters,
+                [name]: value,
+            }
+        }));
     }
 
-    getJokes=async()=>{
-        const response=await Axios.get("https://jokes-api-1qwo.onrender.com/getjokes");
-        console.log(response);
-        const {data} = response;
+    handleFormSubmit=async(event)=>{
+        event.preventDefault();
+        const {filters}=this.state;
+        let {category, jokeType, count}=filters;
+        if(count>5){
+            count=5;
+        }
+        console.log(filters);
+        const response=await Axios.get(`https://jokes-api-1qwo.onrender.com/joke?category=${category}&jokeType=${jokeType}&count=${count}`);
+        const {data}=response;
         console.log(data);
         this.setState({
-            jokes:data,
-        })
+            filteredJokes: data,
+            jokeToRender:this.getRandomJoke(data),
+        });
     }
 
     componentDidMount(){
         this.getJokes();
     }
 
-    getRandom=()=>{
-        const {jokes}=this.state;
-        if (jokes.length === 0) return null;
-        const random=Math.floor(Math.random()*jokes.length);
-        return random;
+    renderJokeForm(joke){
+        const {filters, filteredJokes}=this.state;
+        return(
+            <form action="submit" className="form-container" onSubmit={this.handleFormSubmit}>
+                <h1>Choose your type &#128540;</h1>
+                <label htmlFor="category">Select Category:</label>
+                <select name="category" id="category" value={filters.category} onChange={this.handleInputChange}>
+                    <option value="">Select Category</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Pun">Pun</option>
+                    <option value="Misc">Misc</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Spooky">Spooky</option>
+                    <option value="Christmas">Christmas</option>
+                    <option value="dadjoke">Dadjoke</option>
+                    <option value="chuckjoke">Chuckjoke</option>
+                </select>
+                <label htmlFor="jokeType">Select your Kindof Joke:</label>
+                <select name="jokeType" id="jokeType" value={filters.jokeType} onChange={this.handleInputChange}>
+                    <option value="">Select Joke-Type</option>
+                    <option value="nsfw">NSFW</option>
+                    <option value="sexist">Sexist</option>
+                    <option value="political">Political</option>
+                    <option value="racist">Racist</option>
+                    <option value="explicit">Explicit</option>
+                    <option value="religious">Religious</option>
+                    <option value="safe">Safe</option>
+                </select>
+                <label htmlFor="count">How many would you like? &#129300;</label>
+                <input type="number" id="count" name="count" value={filters.count} onChange={this.handleInputChange}/>
+                {filteredJokes.length>0?
+                (
+                    filteredJokes.map(filterjoke=>{
+                    return <JokeItem joke={filterjoke} key={filterjoke.id}/>
+                })
+                ): <JokeItem joke={joke}/>}
+                <button type="submit" className="submit-button">Get Joke</button>
+
+                <p>*please select only upto 5 Jokes at a time. If above 5 are selected, system will return only 5*</p>
+                <p>*default category is set to dadjoke. change it if needed*</p>
+            </form>
+        )
     }
 
     render(){
-        const randomNum=this.getRandom();
-        const {jokes}=this.state;
-        const jokeToRender = jokes.find(item => item.id === randomNum);
+        const {jokeToRender}=this.state
         return(
-            <div>
+            <div className="main-container">
             {
                     jokeToRender? 
-                    <div>
-                        <h1>{jokeToRender.setup}</h1>
-                        <h1>{jokeToRender.delivery}</h1>
+                    <div className="main-container">
+                        {this.renderJokeForm(jokeToRender)}
                     </div>
                     : null
             }
