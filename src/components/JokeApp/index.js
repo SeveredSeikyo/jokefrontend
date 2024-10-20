@@ -60,6 +60,7 @@ class JokeApp extends Component{
         }
         console.log(filters);
         const response=await Axios.get(`https://jokes-api-1qwo.onrender.com/joke?category=${category}&jokeType=${jokeType}&count=${count}`);
+        console.log(response);
         const {data}=response;
         console.log(data);
         this.setState({
