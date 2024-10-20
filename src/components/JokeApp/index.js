@@ -160,7 +160,7 @@ class JokeApp extends Component{
                 <p>*please select only upto 5 Jokes at a time. If above 5 are selected, system will return only 5*<br/>
                 *default category is set to dadjoke. change it if needed*<br/>
                 *if No Matched Jokes found then it returns random Joke*<br/>
-                *dadjokes are considered safe by default*
+                *dadjokes are considered safe by default*<br/>
                 *Now hosting 69000+ jokes &#129395;</p>
             </form>
         )
