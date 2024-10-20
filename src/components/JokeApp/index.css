@@ -1,6 +1,5 @@
 .form-container{
-    max-width: 80%;
-    min-width: 80%;
+    width: 80%;
     height: auto;
     margin: 10px;
     padding: 20px 40px;
@@ -10,6 +9,7 @@
     text-align: left;
     border: 1px solid black;
     border-radius: 20px;
+    flex-shrink: 0;
 }
 
 .form-container h1{
